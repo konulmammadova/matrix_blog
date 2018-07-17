@@ -62,31 +62,15 @@
                 <ul class="list-inline text-center">
                     {% for s in social %}
                         <li class="list-inline-item">
-                            {% if not s.url %}
+                            {% if s.url %}
                                 <a href="{{ s.url }}">
                                     {{ s.icon|safe }}
                                 </a>
                             {% endif %}
                         </li>
                     {% endfor %}
-                    {% comment %} <li class="list-inline-item">
-            <a href="#">
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a href="#">
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>{% endcomment %}
                 </ul>
-                <p class="copyright text-muted">Copyright &copy; Your Website 2018</p>
+                <p class="copyright text-muted">Copyright &copy; Matrix Training Center 2018</p>
             </div>
         </div>
     </div>

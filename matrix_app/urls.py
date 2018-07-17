@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import IndexPageView, AboutPageView, ContactPageView, PostPageView
 
+# app_name = 'matrix_app'
+
 urlpatterns = [
     path('', IndexPageView, name='index'),
     # path('index', IndexPageView, name='index'),

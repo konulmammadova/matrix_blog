@@ -1,37 +1,54 @@
 from django.shortcuts import render
-from matrix_app.models import Header, Menu, Post, SocialMedia
+from matrix_app.models import Header, Menu, Post, About, SocialMedia
 from matrix_app.forms import ContactForm
+from django.core.paginator import Paginator
+from django.contrib import messages
 
 base_data = {
     'menus': Menu.objects.all(),
     'social': SocialMedia.objects.all(),
 }
 
+
 # Create your views here.
 def IndexPageView(request):
     content = base_data
     content['header'] = Header.objects.first()
-    content['posts'] = Post.objects.all()[:4]
+
+    post_list = Post.objects.all()
+    paginator = Paginator(post_list, 4)
+    page = request.GET.get('page')
+    if page:
+        posts = paginator.get_page(page)
+    else:
+        posts = paginator.get_page(1)
+
+    content['posts'] = posts
+
     return render(request, 'index.html', content)
+
 
 def AboutPageView(request):
     content = base_data
-    return render(request, 'about.html',content)
+    about_model = About.objects.first()
+    content ['about'] = about_model
+    return render(request, 'about.html', content)
+
 
 def ContactPageView(request):
     content = base_data
-
     if request.method == 'GET':
-        content['form'] = ContactForm()
-        return render(request, 'contact.html', content)
-    else:
+        form = ContactForm()
+    elif request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.name = form.cleaned_data('name')
-            form.email = form.cleaned_data('email')
-            form.message = form.cleaned_data('message')
-            content['form'] = form
+            form.save()
+            messages.success(request, "Mesajiniz ugurla gonderildi. Tesekkur edirik!")
+
+    form = ContactForm()
+    content['form'] = form
     return render(request, 'contact.html', content)
+
 
 def PostPageView(request, post_id):
     content = base_data

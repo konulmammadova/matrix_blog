@@ -1,39 +1,39 @@
 {% extends 'base.html' %}
 
-    {% block content %}
+{% block content %}
     <!-- Page Header -->
-        {% load static %}
-    <header class="masthead" style="background-image: url('{% static 'img/post-bg.jpg' %}')">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            <div class="post-heading">
-              <h1>{{ post.title }}</h1>
-              <h2 class="subheading">{{ post.sub_title }}</h2>
-              <span class="meta">Posted by
+    {% load static %}
+    <header class="masthead" style="background-image: url('{{ post.image.url }}')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="post-heading">
+                        <h1>{{ post.title }}</h1>
+                        <h2 class="subheading">{{ post.sub_title }}</h2>
+                        <span class="meta">Posted by
                 <a href="#">{{ post.author.user.username }}</a>
                 on August 24, 2018</span>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </header>
 
     <!-- Post Content -->
     <article>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            {{ post.content }}
-            <p>Placeholder text by
-              <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by
-              <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>.</p>
-          </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    {{ post.content }}
+                    <p>Placeholder text by
+                        <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by
+                        <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>.</p>
+                </div>
+            </div>
         </div>
-      </div>
     </article>
 
     <hr>
 
-    {% endblock %}
+{% endblock %}

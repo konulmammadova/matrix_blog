@@ -1,14 +1,38 @@
 from django.contrib import admin
-from matrix_app.models import Header, Menu, Author, Post, SocialMedia
+from matrix_app.models import Header, Menu, About, Author, Post, SocialMedia, Contact
+
 
 # Register your models here.
 
+@admin.register(Header)
+class HeaderAdmin(admin.ModelAdmin):
+    # readonly_fields = ('title',)
+    list_display = ('title', 'get_bg_image')
 
-# class AuthorAdmin(admin.ModelAdmin):
-#     list_display = (author.user.first_name, author.user.last_name)
 
-admin.site.register(Header)
+@admin.register(Menu)
+class MenuAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order')
+
+
+@admin.register(About)
+class AboutAdmin(admin.ModelAdmin):
+    list_display = ('title', 'sub_title', 'get_bg_image')
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('get_image', 'title', 'sub_title', 'author', 'publish_date')
+
+
 admin.site.register(Author)
-admin.site.register(Post)
-admin.site.register(Menu)
-admin.site.register(SocialMedia)
+
+
+@admin.register(SocialMedia)
+class MenuAdmin(admin.ModelAdmin):
+    list_display = ('name', 'url')
+
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'phone', 'message')
