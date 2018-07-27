@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from ckeditor.fields import RichTextField
 
 
 # Create your models here.
@@ -53,7 +54,7 @@ class Post(models.Model):
     image = models.ImageField(blank=True, default='post-sample-image.jpg')
     title = models.CharField(max_length=250, db_index=True)
     sub_title = models.CharField(max_length=250)
-    content = models.TextField()
+    content = RichTextField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     publish_date = models.DateTimeField(default=timezone.now)
 
@@ -91,10 +92,10 @@ class About(models.Model):
 
 
 class Contact(models.Model):
-    name = models.CharField(max_length=150, blank=False)
-    email = models.EmailField(blank=False)
-    phone = models.CharField(max_length=10, blank=False)
-    message = models.TextField(max_length=250, blank=False)
+    name = models.CharField(max_length=150, verbose_name="Ad")
+    email = models.EmailField(verbose_name="Email")
+    phone = models.CharField(max_length=10, verbose_name="Telefon")
+    message = models.TextField(max_length=250, verbose_name="Mesaj")
 
     def __str__(self):
         return "{}".format(self.name)

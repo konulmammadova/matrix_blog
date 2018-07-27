@@ -22,40 +22,30 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
-                <p>Əlaqə saxlamaq istəyirsiniz? Aşağıdakı formu dolduraraq mesajınızı göndərin və biz sizə ən qısa zamanda geri dönəcəyik.</p>
-                <form name="sentMessage" id="contactForm" novalidate method="post">
+                <p>Əlaqə saxlamaq istəyirsiniz? Aşağıdakı formu dolduraraq mesajınızı göndərin və biz sizə ən qısa
+                    zamanda geri dönəcəyik.</p>
+                <form name="sentMessage" id="contactForm" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="control-group">
-                        <div class="form-group floating-label-form-group controls">
-                            <label>Name</label>
-                            {% render_field form.name class="form-control" placeholder='Tam adınız' %}
-                            <p class="help-block text-danger"></p>
+                    {% for field in form %}
+                        <div class="control-group">
+                            <div class="form-group floating-label-form-group controls">
+                                <label>{{ field.label }}</label>
+                                {{ field|add_class:"form-control" }}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="help-block text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="form-group floating-label-form-group controls">
-                            <label>Email Address</label>
-                            {% render_field form.email class="form-control" placeholder="Poçt ünvanınız" %}
-                            <p class="help-block text-danger"></p>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="form-group col-xs-12 floating-label-form-group controls">
-                            <label>Phone Number</label>
-                            {% render_field form.phone class="form-control" placeholder="Telefon" %}
-                            <p class="help-block text-danger"></p>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="form-group floating-label-form-group controls">
-                            <label>Message</label>
-                            {% render_field form.message class="form-control" data-validation-required-message="Please enter your email address." type="textarea" rows="7" placeholder="Mesajınızı daxil edin..." %}
-                            {#                required data-validation-required-message="Please enter a message.">#}
-                            <p class="help-block text-danger"></p>
-                        </div>
-                    </div>
+                    {% endfor %}
                     <br>
-                    <div id="success"></div>
+                    {% if messages %}
+                        {% for msg in messages %}
+                            <div id="{{ msg.tags }}">{{ msg }}</div>
+                        {% endfor %}
+                    {% endif %}
+
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary" id="sendMessageButton">Göndər</button>
                     </div>

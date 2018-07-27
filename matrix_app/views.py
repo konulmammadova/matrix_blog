@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from matrix_app.models import Header, Menu, Post, About, SocialMedia
 from matrix_app.forms import ContactForm
 from django.core.paginator import Paginator
@@ -15,14 +15,24 @@ def IndexPageView(request):
     content = base_data
     content['header'] = Header.objects.first()
 
+    # arr = []
+
     post_list = Post.objects.all()
+
+    # for x in range(400):
+        # arr.append(post_list.last())
+
     paginator = Paginator(post_list, 4)
     page = request.GET.get('page')
     if page:
         posts = paginator.get_page(page)
     else:
         posts = paginator.get_page(1)
-
+    max_index = len(paginator.page_range)
+    index = int(page) - 1
+    start_index = index - 5 if index > 5 else 0
+    end_index = index + 5 if index <= max_index else max_index - 1
+    content['page_index'] = paginator.page_range[start_index:end_index]
     content['posts'] = posts
 
     return render(request, 'index.html', content)
@@ -37,17 +47,19 @@ def AboutPageView(request):
 
 def ContactPageView(request):
     content = base_data
-    if request.method == 'GET':
-        form = ContactForm()
-    elif request.method == 'POST':
+    form = ContactForm()
+    if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Mesajiniz ugurla gonderildi. Tesekkur edirik!")
-
-    form = ContactForm()
-    content['form'] = form
-    return render(request, 'contact.html', content)
+            return redirect('contact')
+        else:
+            content['form'] = form
+            return render(request, 'contact.html', content)
+    else:
+        content['form'] = form
+        return render(request, 'contact.html', content)
 
 
 def PostPageView(request, post_id):

@@ -40,23 +40,42 @@
                     <hr>
                 {% endfor %}
 
-
-                {% if posts.has_previous %}
-                    <div class="clearfix">
-                        <a class="btn btn-primary float-right" href="?page={{ posts.previous_page_number }}">Daha yeni Postlar
-                            &rarr;</a>
+                {% if posts.has_other_pages %}
+                    <nav>
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item">
+                                {% if posts.has_previous %}
+                                    <a class="btn btn-primary float-right" href="?page={{ posts.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                {% endif %}
+                            </li>
+                            {% for p in page_index %}
+                                {% if posts.number == p %}
+                                    <li class="page-item"><a class="disabled btn btn-primary float-right"
+                                                             href="?page={{ p }}">{{ p }}</a></li>
+                                {% else %}
+                                    <li class="page-item"><a class="btn btn-primary float-right"
+                                                             href="?page={{ p }}">{{ p }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            <li class="page-item">
+                                {% if posts.has_next %}
+                                    <a class="btn btn-primary float-right" href="?page={{ posts.next_page_number }}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                {% endif %}
+                            </li>
+                        </ul>
                     </div>
+                    </nav>
                 {% endif %}
-
-                {% if posts.has_next %}
-                    <div class="clearfix">
-                        <a class="btn btn-primary float-right" href="?page={{ posts.next_page_number }}">Əvvəlki Postlar
-                            &rarr;</a>
-                    </div>
-                {% endif %}
-
-            </div>
         </div>
+    </div>
     </div>
     <hr>
 {% endblock %}
