@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <!-- Page Header -->
+    {% load static %}
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('{% static 'img/code-coding-computer.jpg' %}')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="page-heading">
+              <h1>Daxil ol</h1>
+              <span class="subheading"><a href="{% url 'register' %}" style="color:white;">Hesabın yoxdur? </a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+
+    <!-- Main Content -->
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+         {% if request.user.is_authenticated %}
+        {% endif %}
+
+          <form method="post" name="loginFrom" id="loginFrom" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% for field in login_form %}
+            <div class="control-group">
+              <div class="form-group floating-label-form-group controls">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                <p class="help-block text-danger"></p>
+              </div>
+            </div>
+              {% endfor %}
+            <div id="success"></div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary" id="sendMessageButton">Daxil ol</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+{% endblock %}
