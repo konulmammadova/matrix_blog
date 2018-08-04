@@ -1,5 +1,5 @@
 from django.contrib import admin
-from matrix_app.models import Header, Menu, About, Author, Post, SocialMedia, Contact
+from matrix_app.models import Header, Menu, About, Post, SocialMedia, Contact, Profile
 
 
 # Register your models here.
@@ -25,7 +25,7 @@ class PostAdmin(admin.ModelAdmin):
     list_display = ('get_image', 'title', 'sub_title', 'author', 'publish_date')
 
 
-admin.site.register(Author)
+admin.site.register(Profile)
 
 
 @admin.register(SocialMedia)
