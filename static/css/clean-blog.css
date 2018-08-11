@@ -418,3 +418,68 @@ footer .copyright {
   font-size: 16px;
   padding: 25px 35px;
 }
+
+
+/* Aditional Css */
+.dropdown .avatar img {
+  width: 30px;
+  border-radius: 50%;
+}
+
+.dropdown .user-text p {
+  font-size: 12px;
+  font-weight: 800;
+  color: white;
+  margin: 10px 10px;
+}
+
+.is-fixed p {
+  color: #212529 !important;
+}
+
+.dropdown .request-user {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.over-user {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  padding: 10px;
+  background: #0000001a;
+  top: 48px;
+}
+
+.dropdown-menu li {
+  padding: 5px;
+}
+
+.dropdown-menu li a {
+  color: white;
+  font-size: 12px;
+}
+
+.is-fixed .dropdown-menu {
+  background: rgba(255,255,255,.9) !important;
+}
+.is-fixed .dropdown-menu li a {
+  color: #212529 !important;
+}
+
+@media only screen and (max-width: 768px) {
+  /*mobile*/
+  .dropdown .user-text p {
+    color: rgba(0,0,0,.7);
+  }
+  /*background: rgba(255,255,255,.9);*/
+  .dropdown-menu {
+    background: rgba(255,255,255,.9);
+  }
+  .dropdown-menu li a {
+    color: #212529;
+  }
+
+}

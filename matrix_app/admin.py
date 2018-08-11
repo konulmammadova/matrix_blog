@@ -1,13 +1,12 @@
 from django.contrib import admin
-from matrix_app.models import Header, Menu, About, Author, Post, SocialMedia, Contact
-
+from matrix_app.models import Header, Menu, About, Post, SocialMedia, Contact, Profile, Token
 
 # Register your models here.
-
+admin.site.register(Token)
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
     # readonly_fields = ('title',)
-    list_display = ('title', 'get_bg_image')
+    list_display = ('title', 'sub_title', 'get_bg_image')
 
 
 @admin.register(Menu)
@@ -22,10 +21,10 @@ class AboutAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('get_image', 'title', 'sub_title', 'author', 'publish_date')
+    list_display = ('get_image', 'slug', 'title', 'sub_title', 'author', 'publish_date')
 
 
-admin.site.register(Author)
+admin.site.register(Profile)
 
 
 @admin.register(SocialMedia)

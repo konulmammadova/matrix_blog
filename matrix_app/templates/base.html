@@ -1,6 +1,5 @@
-{% load static %}
-
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -13,7 +12,6 @@
     <title>Matrix First Blog</title>
 
     <!-- Bootstrap core CSS -->
-    <!-- <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="{% static '/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Custom fonts for this template -->
     <link href="{% static '/vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
@@ -46,6 +44,33 @@
                         <a class="nav-link" href="{{ menu.url }}">{{ menu.name }}</a>
                     </li>
                 {% endfor %}
+
+            {% if not user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Daxil ol</a>
+                </li>
+            {% else %}
+               <li class="nav-item">
+               <div class="dropdown">
+                <div class="over-user" type="button" data-toggle="dropdown">
+                <div class="request-user">
+                  <div class="avatar">
+                    <img src="{% static 'img/default-profile.png' %}">
+                  </div>
+                  <div class="user-text">
+                    <p>{{ user.get_full_name }}</p>
+                  </div>
+                </div>
+                <ul class="dropdown-menu">
+                  <li onclick="location.href = '{% url 'dashboard' %}'"><a >Lövhə</a></li>
+                  <li><a href="#">Məqalələrim</a></li>
+                  <li onclick="location.href='{% url 'edit_profile' %}'"><a>Tənzimləmələr</a></li>
+                  <li onclick="location.href = '{% url 'logout' %}'"><a>Çıxış</a></li>
+                </ul>
+              </div>
+                </div>
+            </li>
+            {% endif %}
             </ul>
         </div>
     </div>
@@ -82,6 +107,7 @@
 
 <!-- Custom scripts for this template -->
 <script src="{% static '/js/clean-blog.min.js' %}"></script>
-
+    {% block ck_script %}
+    {% endblock %}
 </body>
 </html>

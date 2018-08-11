@@ -1,12 +1,15 @@
+import random, string
+
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
-from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 # Create your models here.
-
+User = get_user_model()
 
 class Header(models.Model):
     title = models.CharField(max_length=225)
@@ -38,40 +41,15 @@ class Menu(models.Model):
         ordering = ('order',)
 
 
-# User = get_user_model()
-class Author(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return '{}'.format(self.user)
-
-    class Meta:
-        verbose_name = "Müəllif"
-        verbose_name_plural = "Müəlliflər"
-
-
-class Post(models.Model):
-    image = models.ImageField(blank=True, default='post-sample-image.jpg')
-    title = models.CharField(max_length=250, db_index=True)
-    sub_title = models.CharField(max_length=250)
-    content = RichTextField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    publish_date = models.DateTimeField(default=timezone.now)
-
-    def get_image(self):
-        if self.image:
-            return mark_safe("<img style='width:200px' src='{}' alt=''>".format(self.image.url))
-        else:
-            return mark_safe("<img  style='width:200px' src='{}' alt=''>".format(
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"))
-
-    def __str__(self):
-        return '{}'.format(self.title)
-
-    class Meta:
-        verbose_name = "Post"
-        verbose_name_plural = "Postlar"
-        ordering = ("-publish_date",)
+# class Author(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return '{}'.format(self.user)
+#
+#     class Meta:
+#         verbose_name = "Müəllif"
+#         verbose_name_plural = "Müəlliflər"
 
 
 class About(models.Model):
@@ -116,3 +94,58 @@ class SocialMedia(models.Model):
     class Meta:
         verbose_name = "Sosial şəbəkə"
         verbose_name_plural = "Sosial şəbəkələr"
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    about = models.TextField(null=True, blank=True)
+    picture = models.ImageField(default='about-bg.jpg', upload_to='pictures/', null=True, blank=True)
+
+    def __str__(self):
+        return '{}'.format(self.user)
+
+    class Meta:
+        verbose_name = "Müəllif"
+        verbose_name_plural = "Müəlliflər"
+
+
+class Post(models.Model):
+    image = models.ImageField(blank=True, default='default-profile.jpg')
+    title = models.CharField(max_length=250, db_index=True)
+    sub_title = models.CharField(max_length=250)
+    content = RichTextUploadingField()
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    publish_date = models.DateField(default=timezone.now)
+    status = models.BooleanField(default=True)
+    slug = models.SlugField(unique=True,null=True, blank=True)
+
+    def get_absolute_url(self):
+        # return '/post/detail/{}'.format(self.id)
+        return reverse('detail', kwargs={'slug': self.slug})
+
+
+    def get_image(self):
+        if self.image:
+            return mark_safe("<img style='width:200px' src='{}' alt=''>".format(self.image.url))
+        else:
+            return mark_safe("<img  style='width:200px' src='{}' alt=''>".format(
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"))
+
+    def __str__(self):
+        return '{}'.format(self.title)
+
+    class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Postlar"
+        ordering = ("-publish_date",)
+
+
+class Token(models.Model):
+    def random_token_generator(size=20, chars=string.ascii_letters + string.digits):
+        return ''.join(random.choice(chars) for _ in range(size))
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20, default=random_token_generator())
+    activation = models.BooleanField(default=False)
+
+

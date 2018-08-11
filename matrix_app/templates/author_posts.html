@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url({{ request.user.profile.picture.url }})">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="page-heading">
+                        <h1>{{ request.user.get_full_name }}</h1>
+                        <span class="subheading">{{ author.about }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- Main Content -->
+    <div class="container">
+    <div style="text-align:center"><h1>Yayımladığı Xəbərlər</h1></div>
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+
+                {% for post in posts %}
+
+                    <div class="post-preview">
+                        <a href="{% url 'post' post_id=post.id %}">
+                            <h2 class="post-title">
+                                {{ post.title }}
+                            </h2>
+                            <h3 class="post-subtitle">
+                                {{ post.sub_title }}
+                            </h3>
+                        </a>
+                        <p class="post-meta">Posted by
+                            <a href="{% url 'author_posts' author_id=post.author.id %}">{{ post.author.user.get_full_name }}</a>
+                            on {{ post.publish_date }}</p>
+                    </div>
+                    <hr>
+                {% endfor %}
+
+                {% if posts.has_other_pages %}
+                    <nav>
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item">
+                                {% if posts.has_previous %}
+                                    <a class="btn btn-primary float-right" href="?page={{ posts.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                {% endif %}
+                            </li>
+                            {% for p in page_index %}
+                                {% if posts.number == p %}
+                                    <li class="page-item"><a class="disabled btn btn-primary float-right"
+                                                             href="?page={{ p }}">{{ p }}</a></li>
+                                {% else %}
+                                    <li class="page-item"><a class="btn btn-primary float-right"
+                                                             href="?page={{ p }}">{{ p }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            <li class="page-item">
+                                {% if posts.has_next %}
+                                    <a class="btn btn-primary float-right" href="?page={{ posts.next_page_number }}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    </nav>
+                {% endif %}
+        </div>
+    </div>
+    </div>
+    <hr>
+{% endblock %}

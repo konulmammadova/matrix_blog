@@ -25,7 +25,7 @@
                 {% for post in posts %}
 
                     <div class="post-preview">
-                        <a href="{% url 'post' post_id=post.id %}">
+                        <a href="{{ post.get_absolute_url }}">
                             <h2 class="post-title">
                                 {{ post.title }}
                             </h2>
@@ -34,7 +34,7 @@
                             </h3>
                         </a>
                         <p class="post-meta">Posted by
-                            <a href="#">{{ post.author.user.username }}</a>
+                            <a href="{% url 'author_posts' author_id=post.author.id %}">{{ post.author.user.get_full_name }}</a>
                             on {{ post.publish_date }}</p>
                     </div>
                     <hr>
