@@ -1,5 +1,8 @@
+import random, string
+
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -96,7 +99,7 @@ class SocialMedia(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     about = models.TextField(null=True, blank=True)
-    picture = models.ImageField(upload_to='pictures/', null=True, blank=True)
+    picture = models.ImageField(default='about-bg.jpg', upload_to='pictures/', null=True, blank=True)
 
     def __str__(self):
         return '{}'.format(self.user)
@@ -107,13 +110,19 @@ class Profile(models.Model):
 
 
 class Post(models.Model):
-    image = models.ImageField(blank=True, default='post-sample-image.jpg')
+    image = models.ImageField(blank=True, default='default-profile.jpg')
     title = models.CharField(max_length=250, db_index=True)
     sub_title = models.CharField(max_length=250)
     content = RichTextUploadingField()
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    publish_date = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    publish_date = models.DateField(default=timezone.now)
     status = models.BooleanField(default=True)
+    slug = models.SlugField(unique=True,null=True, blank=True)
+
+    def get_absolute_url(self):
+        # return '/post/detail/{}'.format(self.id)
+        return reverse('detail', kwargs={'slug': self.slug})
+
 
     def get_image(self):
         if self.image:
@@ -129,4 +138,14 @@ class Post(models.Model):
         verbose_name = "Post"
         verbose_name_plural = "Postlar"
         ordering = ("-publish_date",)
+
+
+class Token(models.Model):
+    def random_token_generator(size=20, chars=string.ascii_letters + string.digits):
+        return ''.join(random.choice(chars) for _ in range(size))
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20, default=random_token_generator())
+    activation = models.BooleanField(default=False)
+
 

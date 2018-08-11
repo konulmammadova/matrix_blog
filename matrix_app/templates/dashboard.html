@@ -6,89 +6,103 @@
     {% load static %}
     <!-- Page Header -->
     <header class="masthead" style="background-image: url('{% static 'img/adult-business-close-up.jpg' %}')">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            <div class="page-heading">
-              <h1>Lövhə</h1>
-              <span class="subheading">Mənim məqalələrim</span>
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="page-heading">
+                        <h1>Lövhə</h1>
+                        <span class="subheading">Mənim məqalələrim</span>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </header>
 
 
     <div class="container">
-      <div class="row">
-        <div class="col-lg-12 col-md-12 mx-auto">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 mx-auto">
 
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Şəkil</th>
-                  <th>Başlıq</th>
-                  <th>Saytda görünməyi</th>
-                  <th>Paylaşıldığı tarix</th>
-                  <th>Əməliyyatlar</th>
-                </tr>
-              </thead>
-              <tbody>
-               <div class="clearfix">
-                 <a class="btn btn-primary float-left" href="{% url 'post_create' %}">Yeni məqalə yarat</a>
-               </div>
-               <br>
-              {% for post in posts %}
-                <tr>
-                  <td>{{ post.id }}</td>
-                  <td><img style="width: 150px;" src="{{ post.picture.url }}"></td>
-                  <td>{{ post.title }}</td>
-{#                    {% if post.status %}#}
-{#                        <td>Hə</td>#}
-{#                        {% else %}#}
-{#                         <td>Yox</td>#}
-{#                    {% endif %}#}
-                    <td>{{ post.status|yesno|capfirst }}</td>
-                  <td>{{ post.publish_date }}</td>
-                  <td><a class="btn btn-success" href="{% url 'post_edit' post_id=post.id  %}">Düzəliş et</a>  <a class="btn btn-danger"  href="{% url 'delete' post_id=post.id %}">Sil</a></td>
-                </tr>
-{#                  data-toggle="modal" data-target="#myModal"#}
-                {% endfor %}
-              </tbody>
-            </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Şəkil</th>
+                            <th>Başlıq</th>
+                            <th>Saytda görünməyi</th>
+                            <th>Paylaşıldığı tarix</th>
+                            <th>Əməliyyatlar</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <div class="clearfix">
+                            <a class="btn btn-primary float-left" href="{% url 'post_create' %}">Yeni məqalə yarat</a>
+                        </div>
+                        <br>
+                        {% for post in posts %}
+                            <tr>
+                                <td>{{ post.id }}</td>
+                                <td><img style="width: 150px;" src="{{ post.picture.url }}"></td>
+                                <td>{{ post.title }}</td>
+                                {#                    {% if post.status %}#}
+                                {#                        <td>Hə</td>#}
+                                {#                        {% else %}#}
+                                {#                         <td>Yox</td>#}
+                                {#                    {% endif %}#}
+                                <td>{{ post.status|yesno|capfirst }}</td>
+                                <td>{{ post.publish_date }}</td>
+                                <td><a class="btn btn-success" href="{% url 'post_edit' post_id=post.id %}">Düzəliş
+                                    et</a> <a class="btn btn-danger delete-post" data-title="{{ post.title }}" data-toggle="modal" data-target="#myModal"
+                                              data-href="{% url 'delete' post_id=post.id %}">Sil</a></td>
+                            </tr>
+                            {#                  data-toggle="modal" data-target="#myModal"#}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Pager -->
+            <div class="clearfix">
+                <a class="btn btn-primary float-left" href="#">Səhifələmə</a>
             </div>
         </div>
-        <!-- Pager -->
-          <div class="clearfix">
-            <a class="btn btn-primary float-left" href="#">Səhifələmə</a>
-          </div>
-      </div>
     </div>
 
     <hr>
     <!-- Modal -->
     <div id="myModal" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-        <form>
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Müasir multifaktorlu autentifikasiya texnologiyaları icmalı</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-dialog">
+            <form method="post" id="post-delete-form" action="#" enctype="multipart/form-data">
+                <!-- Modal content-->
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Müasir multifaktorlu autentifikasiya texnologiyaları icmalı</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-          </div>
-          <div class="modal-body">
-            <p>Bu xəbəri silmək istədiyinizə əminsiniz?</p>
-          </div>
-          <div class="modal-footer">
-          <button type="submit" class="btn btn-success" data-dismiss="modal">Sil</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Bağla</button>
-          </div>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bu xəbəri silmək istədiyinizə əminsiniz?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Sil</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Bağla</button>
+                    </div>
+                </div>
+            </form>
         </div>
-        </form>
-      </div>
     </div>
+{% endblock %}
+
+{% block ck_script %}
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+           $('.delete-post').click(function (e) {
+               $('.modal-title').text($(this).attr('data-title') + " ?");
+               $('#post-delete-form').attr('action', $(this).data('href'));
+           });
+        });
+    </script>
 {% endblock %}

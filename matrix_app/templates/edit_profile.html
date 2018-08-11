@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: {% if request.user.profile.picture.url != null %}url({{ request.user.profile.picture.url }})"> {% endif %}
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="page-heading">
+                        <h1>Tənzimləmələr</h1>
+                        <span class="subheading">Profil məlumatlarını yenilə</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in user_form %}
+                        <div class="control-group">
+                            <div class="form-group floating-label-form-group controls">
+                                <label>{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="help-block text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% for field in profile_form %}
+                        <div class="control-group">
+                            <div class="form-group floating-label-form-group controls">
+                                <label>{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="help-block text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" id="sendMessageButton">Dəyiş</button>
+                        <a style="color: white;" class="btn btn-danger" id="sendMessageButton">Imtina et</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+{% endblock %}
+
+{% block ck_script %}
+
+    {#    <script>#}
+    {#      $(document).ready(function(e) {#}
+    {#        CKEDITOR.replace( 'editor1' );#}
+    {#      });#}
+    {#    </script>#}
+
+    <script type='text/javascript' src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <script type='text/javascript' src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.standalone.min.css">
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/locales/bootstrap-datepicker.az.min.js"></script>
+    <script>
+        $("#id_publish_date").datepicker();
+    </script>
+{% endblock %}

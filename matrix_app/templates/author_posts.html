@@ -1,31 +1,32 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
     <!-- Page Header -->
-    {% load static %}
-    <header class="masthead" style="background-image: url('{{ header.bg_image.url }}')">
+    <header class="masthead" style="background-image: url({{ request.user.profile.picture.url }})">
         <div class="overlay"></div>
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-md-10 mx-auto">
-                    <div class="site-heading">
-                        <h1>{{ header.title }}</h1>
-                        <span class="subheading">{{ header.sub_title }}</span>
+                    <div class="page-heading">
+                        <h1>{{ request.user.get_full_name }}</h1>
+                        <span class="subheading">{{ author.about }}</span>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
+
     <!-- Main Content -->
     <div class="container">
+    <div style="text-align:center"><h1>Yayımladığı Xəbərlər</h1></div>
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
 
                 {% for post in posts %}
 
                     <div class="post-preview">
-                        <a href="{{ post.get_absolute_url }}">
+                        <a href="{% url 'post' post_id=post.id %}">
                             <h2 class="post-title">
                                 {{ post.title }}
                             </h2>

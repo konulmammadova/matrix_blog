@@ -1,12 +1,17 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import render, redirect, get_object_or_404
 
-from matrix_app.models import Header, Menu, Post, About, SocialMedia, Profile
-from matrix_app.forms import ContactForm, LoginForm, RegisterForm, PostForm
+from matrix_app.models import Header, Menu, Post, About, SocialMedia, Profile, Token
+from matrix_app.forms import ContactForm, LoginForm, RegisterForm, PostForm, UserForm, ProfileForm, UserProfileMultiForm
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.urls import reverse
+
+from matrix_blog.settings import EMAIL_HOST_USER
+
+User = get_user_model()
 
 
 base_data = {
@@ -69,9 +74,9 @@ def contact_view(request):
         return render(request, 'contact.html', content)
 
 
-def post_view(request, post_id):
+def post_view(request, slug):
     content = base_data
-    content["post"] = Post.objects.get(id=post_id)
+    content["post"] = Post.objects.get(slug=slug)
     return render(request, "post.html", content)
 
 
@@ -85,17 +90,22 @@ def login_view(request):
             username = login_form.cleaned_data.get('username')
             password = login_form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-            if not user:
-                pass
-            # elif user.check_password(password) | user.check_
-            elif user and user.is_active:
+            if user and user.is_active:
+                if hasattr(user,'token'):
+                    if user.token.activation:
+                        login(request, user)
+                        return redirect(reverse('dashboard'))
+                    else:
+                        messages.success(request, 'Hesabınızı aktivləşdirmək üçün mailinizi yoxlayın.')
+                        return redirect(reverse('login'))
                 login(request, user)
                 # profile = Profile.objects.get(user=user)
                 # content['posts'] = profile.post_set.all()
 
                 return redirect(reverse('dashboard'))
             else:
-                return render(request, 'login.html', content)
+                messages.warning(request, 'Məlumatlarınızı düzgün daxil edin.')
+                return redirect(reverse('login'))
 
     content['login_form'] = login_form
     return render(request, 'login.html', content)
@@ -103,7 +113,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect(reverse('index'))
+    return redirect(reverse('login'))
 
 
 def register_view(request):
@@ -116,14 +126,39 @@ def register_view(request):
             password = register_form.cleaned_data.get('password')
             user.set_password(password)
             user.save()
+            token = Token.objects.create(user=user)
+            url = 'http://127.0.0.1:8000/activate/' + token.name
+            subject, from_email, to = 'Matrix Activation email', EMAIL_HOST_USER, register_form.cleaned_data.get('email')
+            text_content = 'Thank you for registration'
+            html_content = "<p><a href='" + url + "'>Please activate your account</a></p>"
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+            messages.success(request, "Aktivasiya mailiniz uğurla göndərildi. Zəhmət olmasa mailinizi yoxlayın.")
+
             # new_user = authenticate(username=user.username, password=password)
             # login(request, new_user)
+
             return redirect(reverse('login'))
         else:
+            messages.error(request, "Məlumatlarınız keçərli deyil. Zəhmət olmasa yenidən daxil edin.")
             content['register_form'] = register_form
             return render(request, 'register.html', content)
     content['register_form'] = register_form
     return render(request, 'register.html', content)
+
+
+def activate_account_view(request, token):
+    content = base_data
+    user_token = Token.objects.filter(name=token)[0]
+    if not user_token.activation:
+        user_token.activation = True
+        user_token.save()
+        messages.success(request, 'Hesabınız uğurla aktivləşdirildi.Zəhmət olmasa daxil olun.')
+        return redirect(reverse('login'))
+    else:
+
+        return render(request, 'noactivate.html', content)
 
 
 @login_required(login_url='login')
@@ -136,16 +171,15 @@ def dashboard_view(request):
 @login_required(login_url='login')
 def post_edit_view(request, post_id):
     content = base_data
-    the_post = Post.objects.get(id=post_id)
-    edit_form = PostForm(instance=the_post)
+    the_post = get_object_or_404(Post, id=post_id)
+    form = PostForm(instance=the_post)
     if request.method == 'POST':
-        edit_form = PostForm(request.POST, instance=the_post)
-        if edit_form.is_valid():
-            edit_form.save()
+        form = PostForm(request.POST, request.FILES, instance=the_post)
+        if form.is_valid():
+            form.save()
             return redirect(reverse('dashboard'))
-    content['post'] = the_post
-    content['edit_form'] = edit_form
-    return render(request, 'post_edit.html', content)
+    content['form'] = form
+    return render(request, 'post_form.html', content)
 
 
 def delete_view(request, post_id):
@@ -157,13 +191,82 @@ def delete_view(request, post_id):
 @login_required(login_url='login')
 def post_create_view(request):
     content = base_data
-    create_form = PostForm()
+    form = PostForm()
     if request.method == 'POST':
         # current_user = Profile.objects.filter(user=request.user)[0]
-        new_post = Post.objects.create(author=request.user.profile)
-        create_form = PostForm(request.POST, instance=new_post)
-        if create_form.is_valid():
-            create_form.save()
+        # new_post = Post.objects.create(author=request.user.profile)
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save()
+            # post = create_form.save(commit=False)
+            post.author = request.user.profile
+            post.save()
             return redirect(reverse('dashboard'))
-    content['create_form'] = create_form
-    return render(request, 'post_create.html', content)
+    content['form'] = form
+    return render(request, 'post_form.html', content)
+
+
+@login_required(login_url='login')
+def edit_profile_view(request):
+    content = base_data
+    # form = UserProfileMultiForm(instance={
+    #     'user': request.user,
+    #     'profile': request.user.profile
+    # })
+    # if request.method == 'POST':
+    #     form = UserProfileMultiForm(request.POST, request.FILES, instance={
+    #         'user': request.user,
+    #         'profile': request.user.profile
+    #         })
+    #     if form.is_valid():
+    #         profile = form['profile'].save(commit=False)
+    #         profile.user = form['user']
+    #         profile.save()
+    #         return redirect(reverse('dashboard'))
+    # content['user_form'] = form['user']
+    # content['profile_form'] = form['profile']
+    #
+    # return render(request, 'edit_profile.html', content)
+
+    user_form = UserForm(instance=request.user)
+    profile_form = ProfileForm(instance=request.user.profile)
+
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            profile = profile_form.save(commit=False)
+            profile.user = user_form.save()
+            profile.save()
+            # messages.success(request, 'Profil məlumatlarınız müvəffəqiyyətlə yeniləndi!')
+            return redirect(reverse('dashboard'))
+
+    content['user_form'] = user_form
+    content['profile_form'] = profile_form
+
+    return render(request, 'edit_profile.html', content)
+
+
+def author_posts_view(request, author_id):
+    content = base_data
+    author = get_object_or_404(Profile, pk=author_id)
+    post_list = Post.objects.filter(status=True, author_id=author_id)
+
+    paginator = Paginator(post_list, 4)
+    page = request.GET.get('page', 1)
+
+    if page:
+        posts = paginator.get_page(page)
+    else:
+        posts = paginator.get_page(1)
+    max_index = len(paginator.page_range)
+    index = int(page) - 1
+    start_index = index - 5 if index > 5 else 0
+    end_index = index + 5 if index <= max_index else max_index - 1
+    content['page_index'] = paginator.page_range[start_index:end_index]
+
+    content['posts'] = posts
+    content['author'] = author
+
+    return render(request, 'author_posts.html', content)
+
