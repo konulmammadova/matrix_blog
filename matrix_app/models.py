@@ -119,6 +119,10 @@ class Post(models.Model):
     status = models.BooleanField(default=True)
     slug = models.SlugField(unique=True,null=True, blank=True)
 
+    def __init__(self, *args, **kwargs):
+        super(Post, self).__init__(*args, **kwargs)
+        self.title_cache = self.title
+
     def get_absolute_url(self):
         # return '/post/detail/{}'.format(self.id)
         return reverse('detail', kwargs={'slug': self.slug})

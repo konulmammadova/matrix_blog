@@ -8,8 +8,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.urls import reverse
-
-from matrix_blog.settings import EMAIL_HOST_USER
+from django.conf import settings
 
 User = get_user_model()
 
@@ -128,7 +127,7 @@ def register_view(request):
             user.save()
             token = Token.objects.create(user=user)
             url = 'http://127.0.0.1:8000/activate/' + token.name
-            subject, from_email, to = 'Matrix Activation email', EMAIL_HOST_USER, register_form.cleaned_data.get('email')
+            subject, from_email, to = 'Matrix Activation email', settings.EMAIL_HOST_USER, register_form.cleaned_data.get('email')
             text_content = 'Thank you for registration'
             html_content = "<p><a href='" + url + "'>Please activate your account</a></p>"
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])

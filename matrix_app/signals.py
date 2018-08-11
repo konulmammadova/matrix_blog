@@ -24,11 +24,9 @@ def signal_create_slug(*args, **kwargs):
     #     return slug
 
     instance = kwargs.get('instance')
-    if not instance.slug:
+    if not instance.slug and instance.title_cache != instance.title:
+        instance.title_cache = instance.title
         instance.slug = slugify(instance.title)
         instance.save()
 
-    # else:
-    #     instance.slug = create_slug(instance.title)
-    #     instance.save()
-        # pass
+
