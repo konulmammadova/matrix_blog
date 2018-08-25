@@ -30,9 +30,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'k@u-yia=^r1%i5u*rre3(=_(vrkvnuqe$-u79%)laxlk7mw0g4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-INTERNAL_IPS = ['127.0.0.1']
-ALLOWED_HOSTS = []
+DEBUG = False
+# INTERNAL_IPS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,10 +86,20 @@ WSGI_APPLICATION = 'matrix_blog.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'test_db',
+        'USER': 'test_user',
+        'PASSWORD': '73u3ap4KZEwe4e9rt2Ly4ETgesJzkZ3n',
+        'HOST': 'localhost',
     }
 }
 

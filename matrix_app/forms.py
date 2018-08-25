@@ -1,4 +1,4 @@
-from betterforms.multiform import MultiModelForm
+# from betterforms.multiform import MultiModelForm
 from django import forms
 from .models import Contact, Post, Profile
 from django.contrib.auth.models import User
@@ -58,6 +58,7 @@ class PostForm(forms.ModelForm):
             "status": "Status",
         }
 
+
     publish_date = forms.DateField(input_formats=['%m/%d/%Y'])
 
 
@@ -82,9 +83,9 @@ class ProfileForm(forms.ModelForm):
         }
 
 
-class UserProfileMultiForm(MultiModelForm):
-    form_classes = {
-        'user': UserForm,
-        'profile': ProfileForm,
-    }
+# class UserProfileMultiForm(MultiModelForm):
+#     form_classes = {
+#         'user': UserForm,
+#         'profile': ProfileForm,
+#     }
 

@@ -3,7 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import render, redirect, get_object_or_404
 
 from matrix_app.models import Header, Menu, Post, About, SocialMedia, Profile, Token
-from matrix_app.forms import ContactForm, LoginForm, RegisterForm, PostForm, UserForm, ProfileForm, UserProfileMultiForm
+from matrix_app.forms import ContactForm, LoginForm, RegisterForm, PostForm, UserForm, ProfileForm
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
