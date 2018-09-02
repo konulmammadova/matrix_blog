@@ -2,7 +2,6 @@
 
 #Custom slugify funtion
 
-
 def slugify(title):
     symbol_mapping = (
         (' ', '-'),

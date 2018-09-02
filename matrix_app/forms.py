@@ -1,12 +1,7 @@
-# from betterforms.multiform import MultiModelForm
 from django import forms
 from .models import Contact, Post, Profile
 from django.contrib.auth.models import User
-from ckeditor.widgets import CKEditorWidget
 
-
-# class DateInput(forms.DateInput):
-#     input_type = 'date'
 
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -44,10 +39,9 @@ class PostForm(forms.ModelForm):
         fields = ['title', 'image', 'sub_title', 'content', 'publish_date', 'status']
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'Başlıq', 'class': 'form-control'}),
-            # 'image': forms.FileInput(attrs={'placeholder': 'Örtük şəkli', 'class': 'form-control'}),
             'sub_title': forms.TextInput(attrs={'placeholder': 'Alt başlıq', 'class': 'form-control'}),
             'content': forms.Textarea(
-                attrs={'placeholder': 'Məqalə mətni', 'class': 'form-control', 'type': 'datetime-local'}),
+                attrs={'placeholder': 'Məqalə mətni', 'class': 'form-control container', 'type': 'datetime-local'}),
             'publish_date': forms.DateInput(attrs={'class': 'form-control'}),
         }
 
@@ -57,7 +51,6 @@ class PostForm(forms.ModelForm):
             "sub_title": "Alt başlıq",
             "status": "Status",
         }
-
 
     publish_date = forms.DateField(input_formats=['%m/%d/%Y'])
 
@@ -82,10 +75,4 @@ class ProfileForm(forms.ModelForm):
             'about': forms.Textarea(attrs={'placeholder': 'Haqqımda', 'class': 'form-control'})
         }
 
-
-# class UserProfileMultiForm(MultiModelForm):
-#     form_classes = {
-#         'user': UserForm,
-#         'profile': ProfileForm,
-#     }
 

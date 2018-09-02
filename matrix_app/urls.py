@@ -1,7 +1,5 @@
-from django.urls import path,include
+from django.urls import path
 from . import views
-from django.contrib.auth.views import logout
-# app_name = 'matrix_app'
 
 urlpatterns = [
     path('', views.index_view, name='index'),
@@ -17,6 +15,7 @@ urlpatterns = [
     path('delete/<int:post_id>/', views.delete_view, name='delete'),
     path('edit/profile/', views.edit_profile_view, name='edit_profile'),
     path('authors/<int:author_id>/', views.author_posts_view, name='author_posts'),
+    path('posts/', views.my_posts_view, name='my_posts'),
     path('activate/<str:token>/', views.activate_account_view, name='activate_account'),
 ]
 

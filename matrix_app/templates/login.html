@@ -5,13 +5,13 @@
     <!-- Page Header -->
     {% load static %}
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('{% static 'img/code-coding-computer.jpg' %}')">
+    <header class="masthead" style="background-image: url('{% static 'img/login.jpg' %}')">
         <div class="overlay"></div>
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-md-10 mx-auto">
                     <div class="page-heading">
-                        <h1>Daxil ol</h1>
+                        <h2>Daxil ol</h2>
                         <span class="subheading"><a href="{% url 'register' %}"
                                                     style="color:white;">Hesabın yoxdur? </a></span>
                     </div>
@@ -56,7 +56,7 @@
                     {% endfor %}
 
                     <br>
-                    <div class="form-group">
+                    <div class="form-group float-right">
                         <button type="submit" class="btn btn-primary" id="sendMessageButton">Daxil ol</button>
                     </div>
                 </form>

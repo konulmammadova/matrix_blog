@@ -2,25 +2,37 @@
 {% load static %}
 {% block content %}
     <!-- Page Header -->
-    <header class="masthead" style="background-image: {% if request.user.profile.picture.url != null %}url({{ request.user.profile.picture.url }})"> {% endif %}
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-md-10 mx-auto">
-                    <div class="page-heading">
-                        <h1>Tənzimləmələr</h1>
-                        <span class="subheading">Profil məlumatlarını yenilə</span>
+    <header class="masthead"
+            style="background-image: {% if request.user.profile.picture.url != null %}url({{ request.user.profile.picture.url }})"
+                > {% endif %}
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <div class="page-heading">
+                            <h2>Məlumatlarım</h2>
+                            {% if messages %}
+                                {% for msg in messages %}
+                                    <span class="subheading text-capitalize">{{ msg }}</span>
+                                {% endfor %}
+                                {% else %}
+                                <span class="subheading text-capitalize">Profil məlumatlarını yenilə</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
     </header>
 
     <!-- Main Content -->
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
-
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div id="success">{{ msg }}</div>
+                    {% endfor %}
+                {% endif %}
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% for field in user_form %}
@@ -50,8 +62,9 @@
                             </div>
                         </div>
                     {% endfor %}
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary" id="sendMessageButton">Dəyiş</button>
+                    <br>
+                    <div class="form-group float-right">
+                        <button type="submit" class="btn btn-primary" id="sendMessageButton">Yadda saxla</button>
                         <a style="color: white;" class="btn btn-danger" id="sendMessageButton">Imtina et</a>
                     </div>
                 </form>
@@ -63,12 +76,6 @@
 {% endblock %}
 
 {% block ck_script %}
-
-    {#    <script>#}
-    {#      $(document).ready(function(e) {#}
-    {#        CKEDITOR.replace( 'editor1' );#}
-    {#      });#}
-    {#    </script>#}
 
     <script type='text/javascript' src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
     <script type='text/javascript' src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>

@@ -12,24 +12,17 @@ from django.conf import settings
 
 User = get_user_model()
 
-
 base_data = {
     'menus': Menu.objects.all(),
     'social': SocialMedia.objects.all(),
 }
 
 
-# Create your views here.
 def index_view(request):
     content = base_data
     content['header'] = Header.objects.first()
 
-    # arr = []
-
     post_list = Post.objects.filter(status=True)
-
-    # for x in range(400):
-        # arr.append(post_list.last())
 
     paginator = Paginator(post_list, 4)
     page = request.GET.get('page', 1)
@@ -52,7 +45,7 @@ def index_view(request):
 def about_view(request):
     content = base_data
     about_model = About.objects.first()
-    content ['about'] = about_model
+    content['about'] = about_model
     return render(request, 'about.html', content)
 
 
@@ -63,7 +56,7 @@ def contact_view(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Mesajiniz ugurla gonderildi. Tesekkur edirik!")
+            messages.success(request, "Mesajınız uğurla göndərildi. Təşəkkür edirik!")
             return redirect('contact')
         else:
             content['form'] = form
@@ -90,7 +83,7 @@ def login_view(request):
             password = login_form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user and user.is_active:
-                if hasattr(user,'token'):
+                if hasattr(user, 'token'):
                     if user.token.activation:
                         login(request, user)
                         return redirect(reverse('dashboard'))
@@ -98,9 +91,6 @@ def login_view(request):
                         messages.success(request, 'Hesabınızı aktivləşdirmək üçün mailinizi yoxlayın.')
                         return redirect(reverse('login'))
                 login(request, user)
-                # profile = Profile.objects.get(user=user)
-                # content['posts'] = profile.post_set.all()
-
                 return redirect(reverse('dashboard'))
             else:
                 messages.warning(request, 'Məlumatlarınızı düzgün daxil edin.')
@@ -127,16 +117,14 @@ def register_view(request):
             user.save()
             token = Token.objects.create(user=user)
             url = 'http://127.0.0.1:8000/activate/' + token.name
-            subject, from_email, to = 'Matrix Activation email', settings.EMAIL_HOST_USER, register_form.cleaned_data.get('email')
+            subject, from_email, to = 'Matrix Activation email', settings.EMAIL_HOST_USER, register_form.cleaned_data.get(
+                'email')
             text_content = 'Thank you for registration'
             html_content = "<p><a href='" + url + "'>Please activate your account</a></p>"
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
             messages.success(request, "Aktivasiya mailiniz uğurla göndərildi. Zəhmət olmasa mailinizi yoxlayın.")
-
-            # new_user = authenticate(username=user.username, password=password)
-            # login(request, new_user)
 
             return redirect(reverse('login'))
         else:
@@ -156,15 +144,47 @@ def activate_account_view(request, token):
         messages.success(request, 'Hesabınız uğurla aktivləşdirildi.Zəhmət olmasa daxil olun.')
         return redirect(reverse('login'))
     else:
-
-        return render(request, 'noactivate.html', content)
+        return redirect(reverse('index'))
 
 
 @login_required(login_url='login')
 def dashboard_view(request):
     content = base_data
     content['posts'] = Post.objects.filter(author__user=request.user)
+
+    post_list = Post.objects.filter(author__user=request.user)
+
+    paginator = Paginator(post_list, 4)
+    page = request.GET.get('page', 1)
+
+    if page:
+        posts = paginator.get_page(page)
+    else:
+        posts = paginator.get_page(1)
+    max_index = len(paginator.page_range)
+    index = int(page) - 1
+    start_index = index - 5 if index > 5 else 0
+    end_index = index + 5 if index <= max_index else max_index - 1
+    content['page_index'] = paginator.page_range[start_index:end_index]
+
+    content['posts'] = posts
     return render(request, 'dashboard.html', content)
+
+
+@login_required(login_url='login')
+def post_create_view(request):
+    content = base_data
+    form = PostForm()
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save()
+            post.author = request.user.profile
+            post.save()
+            return redirect(reverse('dashboard'))
+    content['form'] = form
+    content['type'] = 'create'
+    return render(request, 'post_form.html', content)
 
 
 @login_required(login_url='login')
@@ -178,6 +198,7 @@ def post_edit_view(request, post_id):
             form.save()
             return redirect(reverse('dashboard'))
     content['form'] = form
+    content['type'] = 'edit'
     return render(request, 'post_form.html', content)
 
 
@@ -188,45 +209,8 @@ def delete_view(request, post_id):
 
 
 @login_required(login_url='login')
-def post_create_view(request):
-    content = base_data
-    form = PostForm()
-    if request.method == 'POST':
-        # current_user = Profile.objects.filter(user=request.user)[0]
-        # new_post = Post.objects.create(author=request.user.profile)
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save()
-            # post = create_form.save(commit=False)
-            post.author = request.user.profile
-            post.save()
-            return redirect(reverse('dashboard'))
-    content['form'] = form
-    return render(request, 'post_form.html', content)
-
-
-@login_required(login_url='login')
 def edit_profile_view(request):
     content = base_data
-    # form = UserProfileMultiForm(instance={
-    #     'user': request.user,
-    #     'profile': request.user.profile
-    # })
-    # if request.method == 'POST':
-    #     form = UserProfileMultiForm(request.POST, request.FILES, instance={
-    #         'user': request.user,
-    #         'profile': request.user.profile
-    #         })
-    #     if form.is_valid():
-    #         profile = form['profile'].save(commit=False)
-    #         profile.user = form['user']
-    #         profile.save()
-    #         return redirect(reverse('dashboard'))
-    # content['user_form'] = form['user']
-    # content['profile_form'] = form['profile']
-    #
-    # return render(request, 'edit_profile.html', content)
-
     user_form = UserForm(instance=request.user)
     profile_form = ProfileForm(instance=request.user.profile)
 
@@ -237,19 +221,40 @@ def edit_profile_view(request):
             profile = profile_form.save(commit=False)
             profile.user = user_form.save()
             profile.save()
-            # messages.success(request, 'Profil məlumatlarınız müvəffəqiyyətlə yeniləndi!')
-            return redirect(reverse('dashboard'))
+            messages.success(request, 'Məlumatlarınız müvəfəqiyyətlə yeniləndi!')
+            return redirect(reverse('edit_profile'))
 
     content['user_form'] = user_form
     content['profile_form'] = profile_form
-
     return render(request, 'edit_profile.html', content)
+
+
+def my_posts_view(request):
+    content = base_data
+    post_list = Post.objects.filter(author=request.user.profile)
+
+    paginator = Paginator(post_list, 4)
+    page = request.GET.get('page', 1)
+
+    if page:
+        posts = paginator.get_page(page)
+    else:
+        posts = paginator.get_page(1)
+    max_index = len(paginator.page_range)
+    index = int(page) - 1
+    start_index = index - 5 if index > 5 else 0
+    end_index = index + 5 if index <= max_index else max_index - 1
+    content['page_index'] = paginator.page_range[start_index:end_index]
+
+    content['posts'] = posts
+
+    return render(request, 'my_posts.html', content)
 
 
 def author_posts_view(request, author_id):
     content = base_data
     author = get_object_or_404(Profile, pk=author_id)
-    post_list = Post.objects.filter(status=True, author_id=author_id)
+    post_list = Post.objects.filter(author_id=author_id)
 
     paginator = Paginator(post_list, 4)
     page = request.GET.get('page', 1)
@@ -268,4 +273,3 @@ def author_posts_view(request, author_id):
     content['author'] = author
 
     return render(request, 'author_posts.html', content)
-

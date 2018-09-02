@@ -11,6 +11,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 # Create your models here.
 User = get_user_model()
 
+
 class Header(models.Model):
     title = models.CharField(max_length=225)
     sub_title = models.CharField(max_length=300)
@@ -20,11 +21,12 @@ class Header(models.Model):
         return '{}'.format(self.title)
 
     class Meta:
+        verbose_name = "Әsas Sәhifә"
         verbose_name_plural = "Әsas Sәhifә"
 
     def get_bg_image(self):
         if self.bg_image:
-            return mark_safe("<img style='width:400px' src='{}' alt=''>".format(self.bg_image.url))
+            return mark_safe("<img style='width:250px' src='{}' alt=''>".format(self.bg_image.url))
 
 
 class Menu(models.Model):
@@ -37,19 +39,8 @@ class Menu(models.Model):
 
     class Meta:
         verbose_name = "Menyu"
-        verbose_name_plural = "Menyular"
+        verbose_name_plural = "Menyu"
         ordering = ('order',)
-
-
-# class Author(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return '{}'.format(self.user)
-#
-#     class Meta:
-#         verbose_name = "Müəllif"
-#         verbose_name_plural = "Müəlliflər"
 
 
 class About(models.Model):
@@ -117,16 +108,14 @@ class Post(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     publish_date = models.DateField(default=timezone.now)
     status = models.BooleanField(default=True)
-    slug = models.SlugField(unique=True,null=True, blank=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
 
     def __init__(self, *args, **kwargs):
         super(Post, self).__init__(*args, **kwargs)
         self.title_cache = self.title
 
     def get_absolute_url(self):
-        # return '/post/detail/{}'.format(self.id)
         return reverse('detail', kwargs={'slug': self.slug})
-
 
     def get_image(self):
         if self.image:

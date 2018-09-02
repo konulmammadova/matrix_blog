@@ -1,11 +1,9 @@
 from django.contrib import admin
 from matrix_app.models import Header, Menu, About, Post, SocialMedia, Contact, Profile, Token
 
-# Register your models here.
-admin.site.register(Token)
+
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
-    # readonly_fields = ('title',)
     list_display = ('title', 'sub_title', 'get_bg_image')
 
 
