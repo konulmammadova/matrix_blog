@@ -28,6 +28,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'k@u-yia=^r1%i5u*rre3(=_(vrkvnuqe$-u79%)laxlk7mw0g4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 # INTERNAL_IPS = ['127.0.0.1']
 # ALLOWED_HOSTS = ['*']
@@ -153,7 +154,6 @@ CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
-
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'Custom',

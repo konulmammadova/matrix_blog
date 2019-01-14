@@ -55,8 +55,8 @@
                         <div class="over-user" type="button" data-toggle="dropdown" style="background-colorcolor: #00B0E8">
                             <div class="request-user">
                                 <div class="avatar">
-                                    {% if user.profile.image %}
-                                        <img src="{{ user.profile.image.url }}">
+                                    {% if user.profile.picture %}
+                                        <img src="{{ user.profile.picture.url }}">
                                     {% else %}
                                         <img src="{% static 'img/default-profile.png' %}">
                                     {% endif %}

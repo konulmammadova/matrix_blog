@@ -116,7 +116,7 @@ def register_view(request):
             user.set_password(password)
             user.save()
             token = Token.objects.create(user=user)
-            url = 'http://127.0.0.1:8000/activate/' + token.name
+            url = 'http://' + request.get_host() + '/activate/' + token.name
             subject, from_email, to = 'Matrix Activation email', settings.EMAIL_HOST_USER, register_form.cleaned_data.get(
                 'email')
             text_content = 'Thank you for registration'
@@ -202,6 +202,7 @@ def post_edit_view(request, post_id):
     return render(request, 'post_form.html', content)
 
 
+@login_required(login_url='login')
 def delete_view(request, post_id):
     post = Post.objects.get(id=post_id)
     post.delete()
@@ -229,6 +230,7 @@ def edit_profile_view(request):
     return render(request, 'edit_profile.html', content)
 
 
+@login_required(login_url='login')
 def my_posts_view(request):
     content = base_data
     post_list = Post.objects.filter(author=request.user.profile)

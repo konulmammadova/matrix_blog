@@ -1,5 +1,4 @@
 import random, string
-
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -7,9 +6,11 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from ckeditor_uploader.fields import RichTextUploadingField
 
-
-# Create your models here.
 User = get_user_model()
+
+
+def random_token_generator(size=20, chars=string.ascii_letters + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
 class Header(models.Model):
@@ -31,7 +32,7 @@ class Header(models.Model):
 
 class Menu(models.Model):
     name = models.CharField(max_length=50)
-    url = models.URLField(null=True)
+    url = models.CharField(max_length=20, null=True, blank=True)
     order = models.IntegerField(default=0)
 
     def __str__(self):
@@ -122,7 +123,8 @@ class Post(models.Model):
             return mark_safe("<img style='width:200px' src='{}' alt=''>".format(self.image.url))
         else:
             return mark_safe("<img  style='width:200px' src='{}' alt=''>".format(
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"))
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No"
+                "_image_available.svg/1024px-No_image_available.svg.png"))
 
     def __str__(self):
         return '{}'.format(self.title)
@@ -134,11 +136,8 @@ class Post(models.Model):
 
 
 class Token(models.Model):
-    def random_token_generator(size=20, chars=string.ascii_letters + string.digits):
-        return ''.join(random.choice(chars) for _ in range(size))
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=20, default=random_token_generator())
+    name = models.CharField(max_length=20, default=random_token_generator)
     activation = models.BooleanField(default=False)
 
 
