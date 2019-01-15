@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'matrix_app.apps.MatrixAppConfig',
     'ckeditor',
     'ckeditor_uploader',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -170,3 +172,13 @@ CKEDITOR_CONFIGS = {
 }
 
 ###################################
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}

@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('matrix_app.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('matrix/', include('matrix_app.api_urls')),
 ]
 
 if settings.DEBUG:
@@ -30,9 +31,10 @@ if settings.DEBUG:
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns = [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+                      path('__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns
 
 admin.site.site_title = "Matrix Blog"
 admin.site.site_header = "Matrix Blog"
